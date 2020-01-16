@@ -11,8 +11,6 @@
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  var signupForm = document.getElementById("signupForm");
-  var dataForm = document.getElementById("dataForm");
   var auth = null;
   var errors = null;
 
@@ -26,7 +24,6 @@ function onSignup() {
   var data = {
     username : document.getElementById("signup_username").value,
     password : document.getElementById("signup_password").value,
-    name : document.getElementById("name").value
   };
   
   //Signup case
@@ -37,7 +34,6 @@ function onSignup() {
     users.push({
       "USERNAME": data.username,
       "PassWord": data.password,
-      "Name": data.name,
     });
   }).then(resetForm())
  .catch(function (error) {
@@ -105,33 +101,38 @@ function onSubmitData(userId) {
 function showLoginForm() {
   //console.log(auth.uid);
                 
+  if (auth != null) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("error_bar").style.display = "block";
+    document.getElementById("error").innerHTML = "User is ALready Signed In";
+  };
   if (document.getElementById("login").style.display != "none") {
     document.getElementById("login").style.display = "none";
   }
   
   else {
     document.getElementById("login").style.display = "block";
-    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("signUpForm").style.display = "none";
     document.getElementById("dataForm").style.display = "none";
-  };
-  if (auth != null) {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = "User is ALready Signed In";
   }
+  
 
 }
 function showSignupForm() {
-                
-  if (document.getElementById("signupForm").style.display != "none") {
-    document.getElementById("signupForm").style.display = "none";
+  if (auth != null)  {
+    document.getElementById("error_bar").style.display = "block";
+    document.getElementById("error").innerHTML = "You're already signed in<br>Logout to creae new account"
   }
   else {
-    document.getElementById("signupForm").style.display = "block";
-    document.getElementById("login").style.display = "none";
-    document.getElementById("dataForm").style.display = "none";
+      if (document.getElementById("signUpForm").style.display != "none") {
+        document.getElementById("signUpForm").style.display = "none";
+       }
+      else {
+        document.getElementById("signUpForm").style.display = "block";
+        document.getElementById("login").style.display = "none";
+        document.getElementById("dataForm").style.display = "none";
   }
-
+}
 }
 function showDataForm() {         
   if (document.getElementById("dataForm").style.display != "none") {
@@ -139,7 +140,7 @@ function showDataForm() {
   }
   else {
     document.getElementById("dataForm").style.display = "block";
-    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("signUpForm").style.display = "none";
     document.getElementById("profile").style.display = "none";
     document.getElementById("login").style.display = "none";
   };
@@ -154,7 +155,9 @@ function showDataForm() {
 //making sure user logsout
 function logout() {
   firebase.auth().signOut().then(function(user){
-    alert("logged out");
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("dataForm").style.display = "none";
+    document.getElementById("signUpForm").style.display = "none";
     auth = null;
   }).catch(function(error) {
     errors = error;
@@ -180,13 +183,24 @@ function closeError() {
 };
 //GettingData back from firebase database
 function showProfile() {
+  if (document.getElementById("profile").style.display != "none") {
+    document.getElementById("profile").style.display = "none";
+  }
+  else {
+    document.getElementById("profile").style.display = "block";
+    document.getElementById("dataForm").style.display = "none";
+  }
   if (auth != null) {
     var user = firebase.database().ref("USERS/" + auth.uid);
     user.on("value",getData,getError);
     function getData(data) {
     var userData = data.val();
     document.getElementById("profile").style.display = "block";
-    document.getElementById("profile").innerHTML = '<h1>Your Profile Data is:</h1><br><p>Name: ' +userData["Name"]+ '</p><p>About:' +userData["About"]+ '</p>';
+    document.getElementById("dataForm").style.display = "none";
+    if (userData != null) {
+      document.getElementById("profile").innerHTML = '<h1>Your Profile Data is:</h1><br><p>Name: ' +userData["Name"]+ '</p><p>About:' +userData["About"]+ '</p>';
+    }
+    
 
     //console.log(userData["Name"]);
 }
@@ -196,6 +210,15 @@ function getError(error) {
 
 }
   else {
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("error_bar").style.display = "block";
     document.getElementById("error").innerHTML = "You Need to login First";
   }
 };
+
+function clearScr() {
+  document.getElementById("profile").style.display = "none";
+  document.getElementById("dataForm").style.display = "none";
+  document.getElementById("signUpForm").style.display = "none";
+  document.getElementById("login").style.display = "none";
+}
