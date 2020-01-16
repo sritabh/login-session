@@ -95,7 +95,7 @@ function onSubmitData(userId) {
     about : document.getElementById("about_text").value,
   };
     alert("Data Submitted");
-    users.child(auth.uid).push({
+    users.child(auth.uid).set({
       "Name": data.name,
       "About": data.about,
     });
