@@ -1,4 +1,3 @@
-
  // Your web app's Firebase configuration
  var firebaseConfig = {
   apiKey: "AIzaSyCx_PaXJBTgx-3lzKNoOk0m0mFmRtbc6tQ",
@@ -40,16 +39,13 @@ function onSignup() {
       "PassWord": data.password,
       "Name": data.name,
     });
-  }).then(resetForm()).then(hideError())
- .catch(function (err) {
+  }).then(resetForm())
+ .catch(function (error) {
    // Handle errors
-   errors = err;
-   document.getElementById("error").innerHTML = err;
-   console.log(err);
+    document.getElementById("error_bar").style.display = "block";
+    document.getElementById("error").innerHTML = error;
+   console.log(error);
  });
- if( auth != null ){
- alert("hurray authentication");
-}
 }
 function onLogin() {
   document.getElementById("login").style.display = "none";
@@ -63,9 +59,10 @@ function onLogin() {
           //alert("loggedIn success");
           console.log("logged in Success")
           console.log(authData.uid);
-        }).then(hideError()).then(function(){document.getElementById("dataForm").style.display = "block";})
+        })
         .catch(function(error) {
           errors = error;
+          document.getElementById("error_bar").style.display = "block";
           document.getElementById("error").innerHTML = error;
           console.log("Login Failed!", error);
 })
@@ -78,10 +75,15 @@ function resetForm() {
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User logged in already or has just logged in.
+    document.getElementById("loginState").innerHTML = "User:Logged In!";
+    document.getElementById("login").style.display = "none"
     auth = user;
-    //console.log("Uid printing");
-    //console.log(user.uid);
+    console.log("Uid printing");
+    console.log(user.uid);
   } else {
+    document.getElementById("loginState").innerHTML = "User: Not Logged In!";
+    //document.getElementById("dataDetails").innerHTML = "is this working" + document.getElementById("login_email").value;
+    document.getElementById("login").style.display = "block";
     // User not logged in or has just logged out.
   }
 });
@@ -93,26 +95,32 @@ function onSubmitData(userId) {
     about : document.getElementById("about_text").value,
   };
     alert("Data Submitted");
-    console.log(auth.uid);
     users.child(auth.uid).push({
       "Name": data.name,
       "About": data.about,
     });
 }
-///Showing login form to login
+///Showing login form to login on demand
+// Show data form and signup form on demand
 function showLoginForm() {
-  console.log("login butt")
   //console.log(auth.uid);
                 
   if (document.getElementById("login").style.display != "none") {
     document.getElementById("login").style.display = "none";
   }
+  
   else {
     document.getElementById("login").style.display = "block";
+    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("dataForm").style.display = "none";
+  };
+  if (auth != null) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("error_bar").style.display = "block";
+    document.getElementById("error").innerHTML = "User is ALready Signed In";
   }
 
 }
-// Show data form and signup form on demand
 function showSignupForm() {
                 
   if (document.getElementById("signupForm").style.display != "none") {
@@ -120,6 +128,8 @@ function showSignupForm() {
   }
   else {
     document.getElementById("signupForm").style.display = "block";
+    document.getElementById("login").style.display = "none";
+    document.getElementById("dataForm").style.display = "none";
   }
 
 }
@@ -129,17 +139,27 @@ function showDataForm() {
   }
   else {
     document.getElementById("dataForm").style.display = "block";
+    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("login").style.display = "none";
+  };
+  if (auth == null) {
+    document.getElementById("dataForm").style.display = "none";
+    document.getElementById("error_bar").style.display = "block";
+    document.getElementById("error").innerHTML = "You Need to login First";
   }
 
 }
+
 //making sure user logsout
 function logout() {
   firebase.auth().signOut().then(function(user){
     alert("logged out");
     auth = null;
-  }).then(hideError()).catch(function(error) {
+  }).catch(function(error) {
     errors = error;
-    document.getElementById("error").innerHTML = error;
+    document.getElementById("error_bar").style.display = "block";
+          document.getElementById("error").innerHTML = error;
     console.log(error);
   });
   }
@@ -151,14 +171,31 @@ function prInt() {
   }
   else {
     console.log("U need to login");
-    document.getele
   }
   
 };
-//hide the error just temp wprk
-function hideError() {
-  if (error == null) {
-    document.getElementById("error").style.display = "none";
-  }
+//Closing Error Button Just for Temp work
+function closeError() {
+  document.getElementById("error_bar").style.display = "none";
+};
+//GettingData back from firebase database
+function showProfile() {
+  if (auth != null) {
+    var user = firebase.database().ref("USERS/" + auth.uid);
+    user.on("value",getData,getError);
+    function getData(data) {
+    var userData = data.val();
+    document.getElementById("profile").style.display = "block";
+    document.getElementById("profile").innerHTML = '<h1>Your Profile Data is:</h1><br><p>Name: ' +userData["Name"]+ '</p><p>About:' +userData["About"]+ '</p>';
+
+    //console.log(userData["Name"]);
 }
-  
+function getError(error) {
+  console.log(error);
+}
+
+}
+  else {
+    document.getElementById("error").innerHTML = "You Need to login First";
+  }
+};
