@@ -7,13 +7,17 @@
         
     </head>
     <body>
-        <div id="error"></div>
+        <div id="error_bar"style="display:none;"><p id="error"></p><br><button onclick="closeError();">Close</button></div>
+        <div id="loginState"></div>
         <script src="scripts/session.js"></script>
+        <p id= "dataDetails"></p>
         <div>
             <button onclick="showLoginForm();">Login!</button>
             <button onclick="logout();">Logout!</button>
             <button onclick="showSignupForm();">SignUp!</button>
             <button onclick="showDataForm();">DataEntry!</button>
+            <!---button onclick="prInt();">Print</!---button-->
+            <button onclick="showProfile();">Profile</button>
         </div>
             
         <div id="signupForm" style="display:none;">
@@ -47,8 +51,9 @@
                 <input type="button" value="Submit" onClick="onSubmitData();"/>
             </form>
         </div>
-        <p>Hello</p>
-        
+        <div id="profile" style="display:none;">
+            <h1>Your Profile Data is:</h1><br>
+        </div>
         
     </body>
     
