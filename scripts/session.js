@@ -65,7 +65,7 @@ function onLogin() {
 }
 //Reset form or add different function since on default reloading will not create user
 function resetForm() {
-  signUpForm.reset()
+  document.getElementById("signUpForm").style.display = "none";
 }
 //Check Whether user is logged in aur not
 firebase.auth().onAuthStateChanged(function(user) {
