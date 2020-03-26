@@ -18,7 +18,15 @@
   var users = firebase.database().ref("USERS");
 
   
-
+function showError(error) {
+  document.getElementById("error_bar").style.display = "block";
+  document.getElementById("error").innerHTML = error;
+  if (document.getElementById("error_bar").style.display != "none") {
+    setTimeout(()=>{
+      document.getElementById("error_bar").style.display = "none";
+    },3000) 
+  }
+}
 function onSignup() {
   //alert("Holee cow");
   var data = {
@@ -38,8 +46,7 @@ function onSignup() {
   }).then(resetForm())
  .catch(function (error) {
    // Handle errors
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = error;
+   showError(error)
    console.log(error);
  });
 }
@@ -58,8 +65,7 @@ function onLogin() {
         })
         .catch(function(error) {
           errors = error;
-          document.getElementById("error_bar").style.display = "block";
-          document.getElementById("error").innerHTML = error;
+          showError(error)
           console.log("Login Failed!", error);
 })
 }
@@ -103,8 +109,8 @@ function showLoginForm() {
                 
   if (auth != null) {
     document.getElementById("login").style.display = "none";
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = "User is ALready Signed In";
+    var error = "User is ALready Signed In"
+    showError(error)
   };
   if (document.getElementById("login").style.display != "none") {
     document.getElementById("login").style.display = "none";
@@ -120,8 +126,8 @@ function showLoginForm() {
 }
 function showSignupForm() {
   if (auth != null)  {
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = "You're already signed in<br>Logout to creae new account"
+    var error = "You're already signed in<br>Logout to creae new account";
+    showError(error);
   }
   else {
       if (document.getElementById("signUpForm").style.display != "none") {
@@ -146,8 +152,8 @@ function showDataForm() {
   };
   if (auth == null) {
     document.getElementById("dataForm").style.display = "none";
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = "You Need to login First";
+    var error = "You Need to login First";
+    showError(error)
   }
 
 }
@@ -161,8 +167,7 @@ function logout() {
     auth = null;
   }).catch(function(error) {
     errors = error;
-    document.getElementById("error_bar").style.display = "block";
-          document.getElementById("error").innerHTML = error;
+    showError(error)
     console.log(error);
   });
   }
@@ -211,14 +216,7 @@ function getError(error) {
 }
   else {
     document.getElementById("profile").style.display = "none";
-    document.getElementById("error_bar").style.display = "block";
-    document.getElementById("error").innerHTML = "You Need to login First";
+    var error = "You Need to login First";
+    showError(error)
   }
 };
-
-function clearScr() {
-  document.getElementById("profile").style.display = "none";
-  document.getElementById("dataForm").style.display = "none";
-  document.getElementById("signUpForm").style.display = "none";
-  document.getElementById("login").style.display = "none";
-}
