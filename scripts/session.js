@@ -126,7 +126,7 @@ function showLoginForm() {
 }
 function showSignupForm() {
   if (auth != null)  {
-    var error = "You're already signed in<br>Logout to creae new account";
+    var error = "You're already signed in<br>Logout to create new account";
     showError(error);
   }
   else {
